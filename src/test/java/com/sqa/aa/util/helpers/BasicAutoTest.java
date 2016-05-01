@@ -10,6 +10,7 @@
 
 package com.sqa.aa.util.helpers;
 
+import org.apache.log4j.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.firefox.*;
@@ -31,6 +32,8 @@ import org.testng.annotations.*;
  */
 public class BasicAutoTest {
 	static WebDriver driver;
+
+	static Logger logger = Logger.getLogger(BasicAutoTest.class);
 
 	@DataProvider(name = "UserAccountInfo")
 	public static Object[][] getData() {
@@ -59,7 +62,7 @@ public class BasicAutoTest {
 
 	}
 
-	@BeforeClass(enabled = true, groups = "opera")
+	@BeforeClass(enabled = false, groups = "opera")
 	public static void setupOpera() throws InterruptedException {
 		System.setProperty("webdriver.opera.driver", "drivers/operadriver");
 		driver = new OperaDriver();
@@ -79,6 +82,15 @@ public class BasicAutoTest {
 	@Test(dataProvider = "UserAccountInfo")
 	public void test(String username, String password) throws InterruptedException {
 		System.out.println("Basic Test: U-" + username + "/P-" + password);
+		logger.info("My information..");
+		for (int i = 0; i < 1000; i++) {
+			logger.info("Info Message " + i);
+			if (i % 5 == 0) {
+				logger.fatal("Fatal Message " + i);
+			}
+			logger.debug("message info:" + i);
+
+		}
 
 	}
 }
