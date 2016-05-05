@@ -1,22 +1,27 @@
 package com.sqa.aa.adactin;
 
+import org.apache.log4j.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
 public class LoginTest {
+
 	// creating baseURL variable and giving the value (current app's site)
 	private static String baseURL = "http://adactin.com/HotelAppBuild2";
+
 	// creating driver var to identify on which browser(s) test will run
 	private static WebDriver driver;
+
+	static Logger logger = Logger.getLogger(LoginTest.class);
 
 	@BeforeClass
 	//
 	public static void setupFirefox() throws InterruptedException {
 		// giving value Firefox to driver variable
 		driver = new FirefoxDriver();
-		// getting the actual URL
+		// going to the actual URL
 		driver.get(baseURL);
 
 	}
@@ -24,9 +29,13 @@ public class LoginTest {
 	@Test
 	public void testLogin() throws InterruptedException {
 		logInToWebsite();
-
+		// creating new boolean variable msgElementPresent
 		boolean msgElementPresent;
+		// checking if username_show field is present and settig the returned
+		// boolean value to msgElementPresent
 		msgElementPresent = isElementPresent(By.id("username_show"));
+		// verify the correct welcome message is displayed, otherwise display
+		// error message
 		Assert.assertTrue(msgElementPresent, "No welcome message present");
 		System.out.println("Passed login test!");
 
@@ -47,6 +56,7 @@ public class LoginTest {
 	 *
 	 */
 	private void logInToWebsite() {
+		logger.info("Logging into Website");
 		WebElement username;
 		WebElement password;
 		username = driver.findElement(By.id("username"));
