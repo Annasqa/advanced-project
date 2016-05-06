@@ -10,8 +10,11 @@
 
 package com.sqa.aa.adactin;
 
+import java.text.*;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.*;
+import org.testng.*;
 import org.testng.annotations.*;
 
 /**
@@ -28,6 +31,16 @@ import org.testng.annotations.*;
  */
 public class TC102 {
 	private static WebDriver driver;
+
+	@DataProvider
+	public static Object[][] tc102data() {
+		return new Object[][] {
+				{ "kathytest", "t3stmail", "Sydney", "Hotel Creek", "Standard", "1", "01/06/2016", "4", "2", true },
+				{ "kathytest", "t3stmail", "Paris", "Hotel Creek", "Deluxe", "9", "02/06/2018", "2", "4", true } };
+	}
+
+	public SearchPage searchPage;
+
 	String baseURL = "http://adactin.com/HotelAppBuild2";
 
 	@BeforeClass
@@ -36,26 +49,33 @@ public class TC102 {
 		driver.get(this.baseURL);
 	}
 
-	@Test
-	public void testCheckInOut() {
-		new LoginPage(this.driver).enterUsername("kathytest").enterPassword("t3stmail").login().chooseLocation("Sydney")
-				.chooseHotel("Hotel Creek").choosenumOfRooms("1").chooseroomType("Standard");
-	}
+	@Test(dataProvider = "tc102data")
+	public void testCheckInOut(String username, String password, String location, String hotel, String roomType,
+			String numRooms, String checkIn, String adultsInRoom, String childrenInRoom, boolean expectedResults)
+					throws ParseException {
+		boolean actualResults;
+		System.out.println("TC-102");
+		// Eval CeckOut Date:
+		String checkOut = DefaultPage.changeDate(checkIn, 7);
+		System.out.println("Check-in: " + checkIn + "Check-out: " + checkOut);
 
-	// @Test
-	// public void testLogin() {
-	//
-	// // LoginPage loginPage = new LoginPage(this.driver);
-	// //
-	// loginPage.enterUsername("kathytest").enterPassword("t3stmail").login();
-	// // Assert.assertTrue(loginPage.hasWelcomeMsg());
-	//
-	// // the short method - instead of three lines above it can be combined
-	// // into one
-	// Assert.assertTrue(new
-	// LoginPage(this.driver).enterUsername("kathytest").enterPassword("t3stmail").login()
-	// .hasWelcomeMsg());
-	//
-	// }
+		// Login
+		if (this.searchPage == null) {
+			this.searchPage = new LoginPage(driver).enterUsername(username).enterPassword(password).login();
+
+		} else {
+			this.searchPage.getDriver().get(DefaultPage.getBaseURL() + "/SearchHotel.php");
+		}
+
+		System.out.println("Enter Information: ");
+		this.searchPage.chooseLocation(location).chooseHotel(hotel).chooseroomType(roomType).choosenumOfRooms(numRooms)
+				.chooseCheckInDate(checkIn).chooseCheckOutDate(checkOut).chooseNumAdultsInRoom(adultsInRoom)
+				.chooseNumChildrenInRoom(childrenInRoom)
+				// submit
+				.submit();
+		// checkout if actual is same as expected results
+		actualResults = !this.searchPage.hasCheckInErrorMessage();
+		Assert.assertEquals(actualResults, expectedResults);
+	}
 
 }

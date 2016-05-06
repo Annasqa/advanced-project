@@ -37,13 +37,13 @@ public class LoginPage extends DefaultPage {
 	@FindBy(how = How.CSS, using = "td.welcome_menu")
 	private WebElement welvomeElement;
 
-	public LoginPage(WebDriver driver) {
-		setDriver(driver);
-		// PageFactory.initElements(driver, this);
-		// Can now call initElements directly because this class extends
-		// DefaultPage which extends PageFactory
-		initElements(driver, this);
+	public LoginPage() {
+		PageFactory.initElements(getDriver(), this);
+	}
 
+	public LoginPage(WebDriver driver) {
+		super(driver);
+		PageFactory.initElements(getDriver(), this);
 	}
 
 	public LoginPage enterPassword(String password) {
@@ -58,7 +58,6 @@ public class LoginPage extends DefaultPage {
 
 	public SearchPage login() {
 		this.loginBtn.click();
-		return new SearchPage();
+		return new SearchPage(getDriver());
 	}
-
 }

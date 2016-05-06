@@ -10,6 +10,9 @@
 
 package com.sqa.aa.adactin;
 
+import java.text.*;
+import java.util.*;
+
 import org.apache.log4j.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.*;
@@ -28,9 +31,22 @@ import org.openqa.selenium.support.*;
  *
  */
 public class DefaultPage extends PageFactory {
-	private static String baseURL;
+	private static String baseURL = "http://adactin.com/HotelAppBuild2";
 
 	private static WebDriver driver;
+	private static Logger logger;
+
+	public static String changeDate(String date, int days) throws ParseException {
+		String newDate;
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat df = DateFormat.getDateInstance();
+		Calendar calendar = Calendar.getInstance();
+		Date inputDate = dateFormat.parse(date);
+		calendar.setTime(inputDate);
+		calendar.add(Calendar.DATE, days);
+		newDate = dateFormat.format(calendar.getTime());
+		return newDate;
+	}
 
 	/**
 	 * @return the baseURL
@@ -46,8 +62,6 @@ public class DefaultPage extends PageFactory {
 	public static void setBaseURL(String baseURL) {
 		DefaultPage.baseURL = baseURL;
 	}
-
-	private Logger logger;
 
 	public DefaultPage() {
 		try {
@@ -80,10 +94,10 @@ public class DefaultPage extends PageFactory {
 	}
 
 	public Logger getLogger() {
-		if (this.logger == null) {
-			this.logger = this.logger.getLogger(this.getClass());
+		if (logger == null) {
+			logger = logger.getLogger(this.getClass());
 		}
-		return this.logger;
+		return logger;
 	}
 
 	public void setDriver() throws DriverAlreadyInitializedException {
@@ -100,7 +114,7 @@ public class DefaultPage extends PageFactory {
 	 *            the driver to set
 	 */
 	public void setDriver(WebDriver driver) {
-		getLogger().info("Driver is init in LoginPage");
+		// getLogger().info("Driver is init in LoginPage");
 		if (DefaultPage.driver == null) {
 			DefaultPage.driver = driver;
 		}

@@ -43,7 +43,7 @@ public class SearchPage extends DefaultPage {
 	private WebElement childPerRoom;
 
 	@FindBy(id = "checkout_span")
-	private WebElement errorMEsCheckOut;
+	private WebElement errorMesCheckOut;
 
 	@FindBy(id = "checkin_span")
 	private WebElement errorMesChekIn;
@@ -87,6 +87,20 @@ public class SearchPage extends DefaultPage {
 		PageFactory.initElements(getDriver(), this);
 	}
 
+	public SearchPage chooseCheckInDate(String date) {
+		this.checkIn.clear();
+		this.checkIn.sendKeys(date);
+
+		return this;
+	}
+
+	public SearchPage chooseCheckOutDate(String date) {
+		this.checkOut.clear();
+		this.checkOut.sendKeys(date);
+		;
+		return this;
+	}
+
 	public SearchPage chooseHotel(String hotelChooice) {
 		Select selectHotels = new Select(this.hotels);
 		selectHotels.selectByValue(hotelChooice);
@@ -98,6 +112,18 @@ public class SearchPage extends DefaultPage {
 		selectLocation.selectByValue(locationChooice);
 		return this;
 
+	}
+
+	public SearchPage chooseNumAdultsInRoom(String numInRoom) {
+		Select selectAdultsPerRooms = new Select(this.adultsPerRoom);
+		selectAdultsPerRooms.selectByValue(numInRoom);
+		return this;
+	}
+
+	public SearchPage chooseNumChildrenInRoom(String numInRoom) {
+		Select selectChildrenPerRooms = new Select(this.childPerRoom);
+		selectChildrenPerRooms.selectByValue(numInRoom);
+		return this;
 	}
 
 	public SearchPage choosenumOfRooms(String numRooms) {
@@ -113,6 +139,56 @@ public class SearchPage extends DefaultPage {
 
 	}
 
+	public String getChecInErrorMessage() {
+		if (hasCheckInErrorMessage()) {
+			return this.errorMesChekIn.getText();
+
+		} else {
+			return "";
+		}
+	}
+
+	public String getChecOutErrorMessage() {
+		if (hasCheckOutErrorMessage()) {
+			return this.errorMesCheckOut.getText();
+
+		} else {
+			return "";
+		}
+	}
+
+	public boolean hasCheckInErrorMessage() {
+		boolean hasMessage = false;
+
+		hasMessage = AutoBasics.isElementPresent(getDriver(), By.id("checkin_span"));
+		if (hasMessage) {
+			if (this.errorMesChekIn.getText().length() > 1) {
+				hasMessage = true;
+				System.out.println("Message: " + this.errorMesChekIn.getTagName());
+			} else {
+				hasMessage = false;
+			}
+
+		}
+		return hasMessage;
+	}
+
+	public boolean hasCheckOutErrorMessage() {
+		boolean hasMessage = false;
+
+		hasMessage = AutoBasics.isElementPresent(getDriver(), By.id("checkout_span"));
+		if (hasMessage) {
+			if (this.errorMesCheckOut.getText().length() > 1) {
+				hasMessage = true;
+				System.out.println("Message: " + this.errorMesCheckOut.getTagName());
+			} else {
+				hasMessage = false;
+			}
+
+		}
+		return hasMessage;
+	}
+
 	public boolean hasWelcomeMsg() {
 		// return AutoBasics.isElementPresent(driver,
 		// By.cssSelector("td.welcome_menu"));
@@ -125,6 +201,18 @@ public class SearchPage extends DefaultPage {
 			getLogger().warn(e.getMessage() + getClass().getEnclosingMethod());
 			return false;
 		}
+	}
+
+	public SearchPage reset() {
+		this.resetBtn.click();
+		return this;
+
+	}
+
+	public SearchPage submit() {
+		this.submitBtn.click();
+		return this;
+
 	}
 
 }
